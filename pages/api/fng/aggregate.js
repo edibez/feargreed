@@ -34,57 +34,58 @@ async function sourceAlternative() {
 async function sourceTwo() {
   const key = process.env.CMC_API_KEY;
   if (!key) return null;
-  const json = await safeFetch('https://pro-api.coinmarketcap.com/v3/fear-and-greed/historical', {
-    headers: {
-      'X-CMC_PRO_API_KEY': key,
-      'Accept': 'application/json'
-    }
-  });
-  // Expected shape: { data: [ { value: number|string, timestamp: number, ... }, ... ] }
-  const arr = json?.data;
-  const item = Array.isArray(arr) && arr.length ? arr[arr.length - 1] : null; // latest
-  if (!item || item.value === undefined) throw new Error('CMC: empty data');
-  return {
-    name: 'coinmarketcap',
-    value: Number(item.value),
-    raw: item,
-  };
+  
+  try {
+    // Try the latest endpoint first
+    const json = await safeFetch('https://pro-api.coinmarketcap.com/v3/fear-and-greed/latest', {
+      headers: {
+        'X-CMC_PRO_API_KEY': key,
+        'Accept': 'application/json'
+      }
+    });
+    
+    // CMC API response shape: { data: { value: number, value_classification: string, timestamp: string, ... } }
+    const item = json?.data;
+    if (!item || item.value === undefined) throw new Error('CMC: empty data');
+    
+    return {
+      name: 'coinmarketcap',
+      value: Number(item.value),
+      raw: item,
+    };
+  } catch (err) {
+    console.error('CoinMarketCap API error:', err.message);
+    return null;
+  }
 }
 
-// Source 3: Stub (to be defined)
+// Source 3: CoinStats Fear and Greed
 async function sourceThree() {
-  // Coinglass Fear & Greed history — use latest
-  const key = process.env.COINGLASS_API_KEY;
-  if (!key) return null;
-  const json = await safeFetch('https://open-api-v4.coinglass.com/api/index/fear-greed-history', {
-    headers: {
-      'coinglassSecret': key,
-      'Accept': 'application/json'
-    }
-  });
-  // Expected shape: { data: [ { value: number|string, time: number, ... }, ... ] } or similar
-  const arr = json?.data || json?.result || json?.list;
-  const item = Array.isArray(arr) && arr.length ? arr[arr.length - 1] : null;
-  if (!item) throw new Error('Coinglass: empty data');
-  const val = item.value ?? item.index ?? item.fearGreed ?? item.score;
-  if (val === undefined) throw new Error('Coinglass: no value field');
-  return {
-    name: 'coinglass',
-    value: Number(val),
-    raw: item,
-  };
-}
-
-// Source 4: Stub (to be defined)
-async function sourceFour() {
-  // Coinstats Fear and Greed — placeholder until endpoint provided
   const key = process.env.COINSTATS_API_KEY;
   if (!key) return null;
-  // TODO: Replace URL and mapping once provided
-  // const json = await safeFetch('https://api.coinstats.app/fear-greed/latest', { headers: { 'Authorization': `Bearer ${key}` } });
-  // const val = json?.data?.value;
-  // return { name: 'coinstats', value: Number(val), raw: json };
-  return null;
+  
+  try {
+    // CoinStats API endpoint for Fear & Greed Index
+    const json = await safeFetch('https://openapiv1.coinstats.app/insights/fear-and-greed', {
+      headers: {
+        'X-API-KEY': key,
+        'Accept': 'application/json'
+      }
+    });
+    
+    // Expected shape: { now: { value: number, ... }, ... }
+    const val = json?.now?.value;
+    if (val === undefined) throw new Error('CoinStats: no now.value field');
+    
+    return {
+      name: 'coinstats',
+      value: Number(val),
+      raw: json,
+    };
+  } catch (err) {
+    console.error('CoinStats API error:', err.message);
+    return null;
+  }
 }
 
 function aggregate(values) {
@@ -106,10 +107,9 @@ export default async function handler(req, res) {
       sourceAlternative(),
       sourceTwo(),
       sourceThree(),
-      sourceFour(),
     ]);
 
-    // Build a 4-slot sources array, defaulting undefined to value 0 per spec
+    // Build a 3-slot sources array, defaulting undefined to value 0 per spec
     const slots = results.map((r, idx) => {
       if (r.status === 'fulfilled' && r.value) {
         return { name: r.value.name, value: Number(r.value.value) };
@@ -118,12 +118,12 @@ export default async function handler(req, res) {
       return { name: `source${idx + 1}` , value: 0 };
     });
 
-    // Aggregate across all 4 sources, even if some are zero
+    // Aggregate across all 3 sources, even if some are zero
     const sum = slots.reduce((a, b) => a + (Number.isFinite(b.value) ? b.value : 0), 0);
-    const agg = Math.round(sum / 4);
+    const agg = Math.round(sum / 3);
 
     const payload = {
-      source_count: 4,
+      source_count: 3,
       aggregate_value: agg,
       sources: slots,
     };

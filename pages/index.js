@@ -94,124 +94,226 @@ export default function Home() {
           <div style={{ 
             position: 'relative',
             width: '100%',
-            maxWidth: 600,
-            margin: '0 auto 48px',
-            padding: '40px 0'
+            maxWidth: 500,
+            margin: '0 auto 32px',
+            padding: '20px 0'
           }}>
-            {/* Gauge background */}
-            <svg viewBox="0 0 200 120" style={{ width: '100%', height: 'auto' }}>
-              {/* Background segments */}
+            <svg viewBox="0 0 200 130" style={{ width: '100%', height: 'auto' }}>
+              {/* Outer arc background */}
               <path 
-                d="M 20 100 A 80 80 0 0 1 50 30" 
-                fill="#ffd4d4" 
-                stroke="#cc0000" 
-                strokeWidth="1"
-              />
-              <path 
-                d="M 50 30 A 80 80 0 0 1 100 10" 
-                fill="#ffe4e4" 
-                stroke="#999" 
-                strokeWidth="0.5"
-              />
-              <path 
-                d="M 100 10 A 80 80 0 0 1 150 30" 
-                fill="#f5f5f5" 
-                stroke="#999" 
-                strokeWidth="0.5"
-              />
-              <path 
-                d="M 150 30 A 80 80 0 0 1 180 100" 
-                fill="#f0f0f0" 
-                stroke="#999" 
-                strokeWidth="0.5"
+                d="M 30 100 A 70 70 0 0 1 170 100" 
+                fill="none" 
+                stroke="#e5e5e5" 
+                strokeWidth="28"
+                strokeLinecap="round"
               />
               
-              {/* Labels */}
-              <text x="35" y="90" fontSize="10" fill="#666" fontWeight="600" transform="rotate(-45 35 90)">
-                EXTREME
-              </text>
-              <text x="28" y="100" fontSize="10" fill="#666" fontWeight="600" transform="rotate(-45 28 100)">
-                FEAR
-              </text>
-              <text x="60" y="40" fontSize="10" fill="#999" fontWeight="600" transform="rotate(-20 60 40)">
-                FEAR
-              </text>
-              <text x="100" y="20" fontSize="10" fill="#999" fontWeight="600" textAnchor="middle">
-                NEUTRAL
-              </text>
-              <text x="140" y="40" fontSize="10" fill="#999" fontWeight="600" transform="rotate(20 140 40)">
-                GREED
-              </text>
-              <text x="165" y="85" fontSize="10" fill="#999" fontWeight="600" transform="rotate(45 165 85)">
-                EXTREME
-              </text>
-              <text x="172" y="100" fontSize="10" fill="#999" fontWeight="600" transform="rotate(45 172 100)">
-                GREED
-              </text>
+              {/* Colored arc segments */}
+              {/* Extreme Fear - Red */}
+              <path 
+                d="M 30 100 A 70 70 0 0 1 61.8 41.8" 
+                fill="none" 
+                stroke="#ea4b40" 
+                strokeWidth="26"
+                strokeLinecap="round"
+                opacity="0.9"
+              />
               
-              {/* Needle */}
+              {/* Fear - Light Red/Orange */}
+              <path 
+                d="M 62 42 A 70 70 0 0 1 100 30" 
+                fill="none" 
+                stroke="#f5a89c" 
+                strokeWidth="26"
+                strokeLinecap="round"
+                opacity="0.9"
+              />
+              
+              {/* Neutral - Gray */}
+              <path 
+                d="M 100 30 A 70 70 0 0 1 138 42" 
+                fill="none" 
+                stroke="#d0d0d0" 
+                strokeWidth="26"
+                strokeLinecap="round"
+              />
+              
+              {/* Greed - Light Green */}
+              <path 
+                d="M 138.2 41.8 A 70 70 0 0 1 170 100" 
+                fill="none" 
+                stroke="#c5c5c5" 
+                strokeWidth="26"
+                strokeLinecap="round"
+                opacity="0.7"
+              />
+              
+              {/* Scale dots */}
+              <circle cx="30" cy="100" r="2" fill="#999" />
+              <circle cx="61.8" cy="41.8" r="2" fill="#999" />
+              <circle cx="100" cy="30" r="2" fill="#999" />
+              <circle cx="138.2" cy="41.8" r="2" fill="#999" />
+              <circle cx="170" cy="100" r="2" fill="#999" />
+              
+              {/* Scale numbers */}
+              <text x="30" y="120" fontSize="9" fill="#999" fontWeight="400" textAnchor="middle">0</text>
+              <text x="65" y="120" fontSize="9" fill="#999" fontWeight="400" textAnchor="middle">25</text>
+              <text x="100" y="120" fontSize="9" fill="#999" fontWeight="400" textAnchor="middle">50</text>
+              <text x="135" y="120" fontSize="9" fill="#999" fontWeight="400" textAnchor="middle">75</text>
+              <text x="170" y="120" fontSize="9" fill="#999" fontWeight="400" textAnchor="middle">100</text>
+              
+              {/* Needle with shadow */}
+              <defs>
+                <filter id="shadow">
+                  <feDropShadow dx="0" dy="1" stdDeviation="1.5" floodOpacity="0.3"/>
+                </filter>
+              </defs>
+              
               <line 
                 x1="100" 
                 y1="100" 
-                x2={100 + 70 * Math.cos((180 - payload.body.aggregate_value * 1.8) * Math.PI / 180)} 
-                y2={100 - 70 * Math.sin((180 - payload.body.aggregate_value * 1.8) * Math.PI / 180)}
-                stroke="#000" 
-                strokeWidth="3"
+                x2={100 + 55 * Math.cos((180 - payload.body.aggregate_value * 1.8) * Math.PI / 180)} 
+                y2={100 - 55 * Math.sin((180 - payload.body.aggregate_value * 1.8) * Math.PI / 180)}
+                stroke="#2c2c2c" 
+                strokeWidth="3.5"
                 strokeLinecap="round"
+                filter="url(#shadow)"
               />
-              <circle cx="100" cy="100" r="4" fill="#000" />
-              
-              {/* Scale markers */}
-              <text x="20" y="115" fontSize="10" fill="#999">0</text>
-              <text x="48" y="115" fontSize="10" fill="#999">25</text>
-              <text x="97" y="115" fontSize="10" fill="#999" textAnchor="middle">50</text>
-              <text x="148" y="115" fontSize="10" fill="#999">75</text>
-              <text x="175" y="115" fontSize="10" fill="#999">100</text>
+              <circle cx="100" cy="100" r="6" fill="#2c2c2c" filter="url(#shadow)" />
+              <circle cx="100" cy="100" r="3" fill="#fff" />
             </svg>
             
             {/* Center value display */}
             <div style={{ 
               position: 'absolute',
-              bottom: '10%',
+              bottom: 'calc(5% + 110px)',
               left: '50%',
               transform: 'translateX(-50%)',
               textAlign: 'center'
             }}>
               <div style={{ 
-                fontSize: 64, 
+                fontSize: 72, 
                 fontWeight: 700,
-                color: '#000',
-                lineHeight: 1
+                color: getColor(payload.body.aggregate_value),
+                lineHeight: 1,
+                marginBottom: 4
               }}>
                 {payload.body.aggregate_value}
               </div>
               <div style={{ 
-                fontSize: 14,
-                color: getColor(payload.body.aggregate_value),
+                fontSize: 13,
+                color: '#666',
                 fontWeight: 600,
-                marginTop: 8,
-                letterSpacing: '0.5px'
+                textTransform: 'uppercase',
+                letterSpacing: '1px'
               }}>
                 {getLabel(payload.body.aggregate_value)}
               </div>
             </div>
           </div>
 
-          {/* Historical comparison */}
+          {/* Legend */}
           <div style={{ 
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: 16,
-            marginBottom: 32
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 24,
+            marginBottom: 48,
+            flexWrap: 'wrap',
+            padding: '0 20px'
           }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 13, color: '#666', marginBottom: 4 }}>Previous close</div>
-              <div style={{ fontSize: 24, fontWeight: 700 }}>{getLabel(payload.body.aggregate_value)}</div>
-              <div style={{ fontSize: 32, fontWeight: 700, color: getColor(payload.body.aggregate_value) }}>
-                {payload.body.aggregate_value}
-              </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ 
+                width: 16, 
+                height: 16, 
+                backgroundColor: '#ea4b40', 
+                borderRadius: 2 
+              }} />
+              <span style={{ fontSize: 13, color: '#666', fontWeight: 500 }}>Extreme Fear</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ 
+                width: 16, 
+                height: 16, 
+                backgroundColor: '#f5a89c', 
+                borderRadius: 2 
+              }} />
+              <span style={{ fontSize: 13, color: '#666', fontWeight: 500 }}>Fear</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ 
+                width: 16, 
+                height: 16, 
+                backgroundColor: '#d0d0d0', 
+                borderRadius: 2 
+              }} />
+              <span style={{ fontSize: 13, color: '#666', fontWeight: 500 }}>Neutral</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ 
+                width: 16, 
+                height: 16, 
+                backgroundColor: '#c5c5c5', 
+                borderRadius: 2 
+              }} />
+              <span style={{ fontSize: 13, color: '#666', fontWeight: 500 }}>Greed</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ 
+                width: 16, 
+                height: 16, 
+                backgroundColor: '#a8d5a8', 
+                borderRadius: 2 
+              }} />
+              <span style={{ fontSize: 13, color: '#666', fontWeight: 500 }}>Extreme Greed</span>
             </div>
           </div>
+
+          {/* Individual source values */}
+          {payload.body.sources && (
+            <div style={{ marginBottom: 48 }}>
+              <h2 style={{ 
+                fontSize: 24, 
+                fontWeight: 700, 
+                marginBottom: 24,
+                color: '#000'
+              }}>
+                Individual Sources
+              </h2>
+              <div style={{ 
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: 20
+              }}>
+                {payload.body.sources.map((source, idx) => (
+                  <div key={idx} style={{ 
+                    padding: 20,
+                    backgroundColor: '#fff',
+                    border: '1px solid #e5e5e5',
+                    borderRadius: 8,
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ 
+                      fontSize: 13, 
+                      color: '#666', 
+                      marginBottom: 12,
+                      textTransform: 'capitalize',
+                      fontWeight: 500
+                    }}>
+                      {source.name}
+                    </div>
+                    <div style={{ 
+                      fontSize: 48, 
+                      fontWeight: 700,
+                      color: getColor(source.value)
+                    }}>
+                      {source.value}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Meta information */}
           <div style={{ 
