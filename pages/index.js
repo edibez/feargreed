@@ -13,7 +13,7 @@ export default function Home() {
       const resp = await fetch('/api/fng/aggregate');
       if (!resp.ok) throw new Error('Network error');
       const body = await resp.json();
-      if (typeof body.aggregate_value !== 'number') throw new Error('Unexpected response');
+  if (typeof body.final_index !== 'number') throw new Error('Unexpected response');
       setPayload({ body });
     } catch (err) {
       setError(err.message || String(err));
@@ -185,7 +185,7 @@ export default function Home() {
                   {/* Large value display */}
                   <div style={{
                     display: 'inline-block',
-                    background: getGradient(payload.body.aggregate_value),
+                    background: getGradient(payload.body.final_index),
                     borderRadius: '24px',
                     padding: '32px 48px',
                     marginBottom: '24px',
@@ -199,7 +199,7 @@ export default function Home() {
                       marginBottom: '8px',
                       textShadow: '0 2px 10px rgba(0,0,0,0.2)',
                     }}>
-                      {payload.body.aggregate_value}
+                      {payload.body.final_index}
                     </div>
                     <div style={{
                       fontSize: 'clamp(18px, 3vw, 24px)',
@@ -208,7 +208,7 @@ export default function Home() {
                       textTransform: 'uppercase',
                       letterSpacing: '2px',
                     }}>
-                      {getLabel(payload.body.aggregate_value)}
+                      {getLabel(payload.body.final_index)}
                     </div>
                   </div>
 
@@ -269,8 +269,8 @@ export default function Home() {
                       <line 
                         x1="100" 
                         y1="100" 
-                        x2={100 + 65 * Math.cos((180 - payload.body.aggregate_value * 1.8) * Math.PI / 180)} 
-                        y2={100 - 65 * Math.sin((180 - payload.body.aggregate_value * 1.8) * Math.PI / 180)}
+                        x2={100 + 65 * Math.cos((180 - payload.body.final_index * 1.8) * Math.PI / 180)} 
+                        y2={100 - 65 * Math.sin((180 - payload.body.final_index * 1.8) * Math.PI / 180)}
                         stroke="#2c2c2c" 
                         strokeWidth="4"
                         strokeLinecap="round"
