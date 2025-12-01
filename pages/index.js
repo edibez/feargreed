@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Head from 'next/head';
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
@@ -36,306 +37,421 @@ export default function Home() {
   };
 
   const getColor = (value) => {
-    if (value <= 25) return '#dc4433';
-    if (value <= 45) return '#f5a89c';
-    if (value <= 55) return '#d1d1d1';
-    if (value <= 75) return '#a8d5a8';
-    return '#4caf50';
+    if (value <= 25) return '#f93a37';
+    if (value <= 45) return '#ff8c42';
+    if (value <= 55) return '#ffd93d';
+    if (value <= 75) return '#6bcf7f';
+    return '#16c172';
+  };
+
+  const getGradient = (value) => {
+    if (value <= 25) return 'linear-gradient(135deg, #f93a37 0%, #ff6b6b 100%)';
+    if (value <= 45) return 'linear-gradient(135deg, #ff8c42 0%, #ffad60 100%)';
+    if (value <= 55) return 'linear-gradient(135deg, #ffd93d 0%, #f9ca24 100%)';
+    if (value <= 75) return 'linear-gradient(135deg, #6bcf7f 0%, #95e1a4 100%)';
+    return 'linear-gradient(135deg, #16c172 0%, #38d39f 100%)';
   };
 
   return (
-    <main style={{ 
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif', 
-      padding: '40px 24px', 
-      maxWidth: 1200, 
-      margin: '0 auto',
-      backgroundColor: '#fff'
-    }}>
-      <h1 style={{ 
-        fontSize: 48, 
-        fontWeight: 700, 
-        margin: 0, 
-        marginBottom: 8,
-        color: '#000'
-      }}>
-        Fear & Greed Index
-      </h1>
-      
-      <p style={{ 
-        fontSize: 18, 
-        color: '#000', 
-        margin: 0,
-        marginBottom: 32 
-      }}>
-        What emotion is driving the market now?
-      </p>
+    <>
+      <Head>
+        <title>NOBI Crypto Fear & Greed Index</title>
+        <meta name="description" content="Real-time cryptocurrency market sentiment analysis" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
 
-      {loading && (
-        <div style={{ padding: 40, textAlign: 'center', color: '#666' }}>
-          Loading latest index…
-        </div>
-      )}
+      <style jsx global>{`
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+        }
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          min-height: 100vh;
+          color: #333;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+        @keyframes rotate {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
 
-      {error && (
-        <div style={{ 
-          padding: 20, 
-          backgroundColor: '#fee', 
-          border: '1px solid #fcc',
-          borderRadius: 8,
-          color: '#c33' 
+      <main style={{ 
+        minHeight: '100vh',
+        padding: '40px 20px',
+      }}>
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
         }}>
-          Failed to load latest index: {error}
-        </div>
-      )}
-
-      {payload && (
-        <div>
-          {/* Main gauge display */}
-          <div style={{ 
-            position: 'relative',
-            width: '100%',
-            maxWidth: 500,
-            margin: '0 auto 32px',
-            padding: '20px 0'
+          {/* Header */}
+          <div style={{
+            textAlign: 'center',
+            marginBottom: '48px',
+            animation: 'fadeIn 0.6s ease-out',
           }}>
-            <svg viewBox="0 0 200 130" style={{ width: '100%', height: 'auto' }}>
-              {/* Outer arc background */}
-              <path 
-                d="M 30 100 A 70 70 0 0 1 170 100" 
-                fill="none" 
-                stroke="#e5e5e5" 
-                strokeWidth="28"
-                strokeLinecap="round"
-              />
-              
-              {/* Colored arc segments */}
-              {/* Extreme Fear - Red */}
-              <path 
-                d="M 30 100 A 70 70 0 0 1 61.8 41.8" 
-                fill="none" 
-                stroke="#ea4b40" 
-                strokeWidth="26"
-                strokeLinecap="round"
-                opacity="0.9"
-              />
-              
-              {/* Fear - Light Red/Orange */}
-              <path 
-                d="M 62 42 A 70 70 0 0 1 100 30" 
-                fill="none" 
-                stroke="#f5a89c" 
-                strokeWidth="26"
-                strokeLinecap="round"
-                opacity="0.9"
-              />
-              
-              {/* Neutral - Gray */}
-              <path 
-                d="M 100 30 A 70 70 0 0 1 138 42" 
-                fill="none" 
-                stroke="#d0d0d0" 
-                strokeWidth="26"
-                strokeLinecap="round"
-              />
-              
-              {/* Greed - Light Green */}
-              <path 
-                d="M 138.2 41.8 A 70 70 0 0 1 170 100" 
-                fill="none" 
-                stroke="#c5c5c5" 
-                strokeWidth="26"
-                strokeLinecap="round"
-                opacity="0.7"
-              />
-              
-              {/* Scale dots */}
-              <circle cx="30" cy="100" r="2" fill="#999" />
-              <circle cx="61.8" cy="41.8" r="2" fill="#999" />
-              <circle cx="100" cy="30" r="2" fill="#999" />
-              <circle cx="138.2" cy="41.8" r="2" fill="#999" />
-              <circle cx="170" cy="100" r="2" fill="#999" />
-              
-              {/* Scale numbers */}
-              <text x="30" y="120" fontSize="9" fill="#999" fontWeight="400" textAnchor="middle">0</text>
-              <text x="65" y="120" fontSize="9" fill="#999" fontWeight="400" textAnchor="middle">25</text>
-              <text x="100" y="120" fontSize="9" fill="#999" fontWeight="400" textAnchor="middle">50</text>
-              <text x="135" y="120" fontSize="9" fill="#999" fontWeight="400" textAnchor="middle">75</text>
-              <text x="170" y="120" fontSize="9" fill="#999" fontWeight="400" textAnchor="middle">100</text>
-              
-              {/* Needle with shadow */}
-              <defs>
-                <filter id="shadow">
-                  <feDropShadow dx="0" dy="1" stdDeviation="1.5" floodOpacity="0.3"/>
-                </filter>
-              </defs>
-              
-              <line 
-                x1="100" 
-                y1="100" 
-                x2={100 + 55 * Math.cos((180 - payload.body.aggregate_value * 1.8) * Math.PI / 180)} 
-                y2={100 - 55 * Math.sin((180 - payload.body.aggregate_value * 1.8) * Math.PI / 180)}
-                stroke="#2c2c2c" 
-                strokeWidth="3.5"
-                strokeLinecap="round"
-                filter="url(#shadow)"
-              />
-              <circle cx="100" cy="100" r="6" fill="#2c2c2c" filter="url(#shadow)" />
-              <circle cx="100" cy="100" r="3" fill="#fff" />
-            </svg>
-            
-            {/* Center value display */}
-            <div style={{ 
-              position: 'absolute',
-              bottom: 'calc(5% + 110px)',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              textAlign: 'center'
+            <h1 style={{ 
+              fontSize: 'clamp(36px, 8vw, 64px)', 
+              fontWeight: 800, 
+              margin: 0, 
+              marginBottom: '16px',
+              color: '#ffffff',
+              textShadow: '0 2px 20px rgba(0,0,0,0.2)',
+              letterSpacing: '-1px',
             }}>
-              <div style={{ 
-                fontSize: 72, 
-                fontWeight: 700,
-                color: getColor(payload.body.aggregate_value),
-                lineHeight: 1,
-                marginBottom: 4
-              }}>
-                {payload.body.aggregate_value}
-              </div>
-              <div style={{ 
-                fontSize: 13,
-                color: '#666',
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                letterSpacing: '1px'
-              }}>
-                {getLabel(payload.body.aggregate_value)}
-              </div>
-            </div>
+              NOBI Crypto Fear & Greed Index
+            </h1>
+            
+            <p style={{ 
+              fontSize: 'clamp(16px, 3vw, 20px)', 
+              color: 'rgba(255, 255, 255, 0.9)', 
+              margin: 0,
+              fontWeight: 400,
+            }}>
+              Real-time cryptocurrency market sentiment analysis
+            </p>
           </div>
 
-          {/* Legend */}
-          <div style={{ 
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 24,
-            marginBottom: 48,
-            flexWrap: 'wrap',
-            padding: '0 20px'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ 
-                width: 16, 
-                height: 16, 
-                backgroundColor: '#ea4b40', 
-                borderRadius: 2 
-              }} />
-              <span style={{ fontSize: 13, color: '#666', fontWeight: 500 }}>Extreme Fear</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ 
-                width: 16, 
-                height: 16, 
-                backgroundColor: '#f5a89c', 
-                borderRadius: 2 
-              }} />
-              <span style={{ fontSize: 13, color: '#666', fontWeight: 500 }}>Fear</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ 
-                width: 16, 
-                height: 16, 
-                backgroundColor: '#d0d0d0', 
-                borderRadius: 2 
-              }} />
-              <span style={{ fontSize: 13, color: '#666', fontWeight: 500 }}>Neutral</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ 
-                width: 16, 
-                height: 16, 
-                backgroundColor: '#c5c5c5', 
-                borderRadius: 2 
-              }} />
-              <span style={{ fontSize: 13, color: '#666', fontWeight: 500 }}>Greed</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ 
-                width: 16, 
-                height: 16, 
-                backgroundColor: '#a8d5a8', 
-                borderRadius: 2 
-              }} />
-              <span style={{ fontSize: 13, color: '#666', fontWeight: 500 }}>Extreme Greed</span>
-            </div>
-          </div>
-
-          {/* Individual source values */}
-          {payload.body.sources && (
-            <div style={{ marginBottom: 48 }}>
-              <h2 style={{ 
-                fontSize: 24, 
-                fontWeight: 700, 
-                marginBottom: 24,
-                color: '#000'
-              }}>
-                Individual Sources
-              </h2>
-              <div style={{ 
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                gap: 20
-              }}>
-                {payload.body.sources.map((source, idx) => (
-                  <div key={idx} style={{ 
-                    padding: 20,
-                    backgroundColor: '#fff',
-                    border: '1px solid #e5e5e5',
-                    borderRadius: 8,
-                    textAlign: 'center'
-                  }}>
-                    <div style={{ 
-                      fontSize: 13, 
-                      color: '#666', 
-                      marginBottom: 12,
-                      textTransform: 'capitalize',
-                      fontWeight: 500
-                    }}>
-                      {source.name}
-                    </div>
-                    <div style={{ 
-                      fontSize: 48, 
-                      fontWeight: 700,
-                      color: getColor(source.value)
-                    }}>
-                      {source.value}
-                    </div>
-                  </div>
-                ))}
-              </div>
+          {/* Loading State */}
+          {loading && (
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '80px 20px',
+              animation: 'fadeIn 0.3s ease-out',
+            }}>
+              <div style={{
+                width: '60px',
+                height: '60px',
+                border: '4px solid rgba(255,255,255,0.3)',
+                borderTop: '4px solid #ffffff',
+                borderRadius: '50%',
+                margin: '0 auto 24px',
+                animation: 'rotate 1s linear infinite',
+              }}></div>
+              <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '18px', fontWeight: 500 }}>
+                Loading latest index...
+              </p>
             </div>
           )}
 
-          {/* Meta information */}
-          <div style={{ 
-            marginTop: 32,
-            padding: 20,
-            backgroundColor: '#f9f9f9',
-            borderRadius: 8,
-            fontSize: 13,
-            color: '#666'
-          }}>
-            <div style={{ marginBottom: 8 }}>
-              Aggregate of {payload.body.source_count} sources
+          {/* Error State */}
+          {error && (
+            <div style={{ 
+              padding: '32px',
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              border: '2px solid #ff6b6b',
+              borderRadius: '16px',
+              color: '#d63031',
+              textAlign: 'center',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
+              animation: 'fadeIn 0.3s ease-out',
+              maxWidth: '600px',
+              margin: '0 auto',
+            }}>
+              <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
+              <h3 style={{ fontSize: '20px', marginBottom: '8px', fontWeight: 600 }}>Failed to Load Data</h3>
+              <p style={{ fontSize: '16px', opacity: 0.8 }}>{error}</p>
             </div>
-            <div style={{ marginBottom: 8 }}>
-              {payload.body.cached ? 'Served from server cache' : 'Fresh aggregation'}
+          )}
+
+          {/* Main Content */}
+          {payload && (
+            <div style={{ animation: 'fadeIn 0.6s ease-out 0.2s backwards' }}>
+              {/* Hero Card with Gauge */}
+              <div style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                borderRadius: '24px',
+                padding: 'clamp(32px, 5vw, 64px)',
+                marginBottom: '32px',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
+                backdropFilter: 'blur(10px)',
+              }}>
+                <div style={{
+                  textAlign: 'center',
+                  marginBottom: '48px',
+                }}>
+                  {/* Large value display */}
+                  <div style={{
+                    display: 'inline-block',
+                    background: getGradient(payload.body.aggregate_value),
+                    borderRadius: '24px',
+                    padding: '32px 48px',
+                    marginBottom: '24px',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+                  }}>
+                    <div style={{
+                      fontSize: 'clamp(64px, 12vw, 120px)',
+                      fontWeight: 900,
+                      color: '#ffffff',
+                      lineHeight: 1,
+                      marginBottom: '8px',
+                      textShadow: '0 2px 10px rgba(0,0,0,0.2)',
+                    }}>
+                      {payload.body.aggregate_value}
+                    </div>
+                    <div style={{
+                      fontSize: 'clamp(18px, 3vw, 24px)',
+                      color: 'rgba(255, 255, 255, 0.95)',
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: '2px',
+                    }}>
+                      {getLabel(payload.body.aggregate_value)}
+                    </div>
+                  </div>
+
+                  {/* Gauge visualization */}
+                  <div style={{
+                    maxWidth: '600px',
+                    margin: '0 auto',
+                    padding: '20px 0',
+                  }}>
+                    <svg viewBox="0 0 200 120" style={{ width: '100%', height: 'auto' }}>
+                      <defs>
+                        <linearGradient id="gradRed" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" style={{ stopColor: '#f93a37', stopOpacity: 1 }} />
+                          <stop offset="100%" style={{ stopColor: '#ff6b6b', stopOpacity: 1 }} />
+                        </linearGradient>
+                        <linearGradient id="gradOrange" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" style={{ stopColor: '#ff8c42', stopOpacity: 1 }} />
+                          <stop offset="100%" style={{ stopColor: '#ffad60', stopOpacity: 1 }} />
+                        </linearGradient>
+                        <linearGradient id="gradYellow" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" style={{ stopColor: '#ffd93d', stopOpacity: 1 }} />
+                          <stop offset="100%" style={{ stopColor: '#f9ca24', stopOpacity: 1 }} />
+                        </linearGradient>
+                        <linearGradient id="gradLightGreen" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" style={{ stopColor: '#6bcf7f', stopOpacity: 1 }} />
+                          <stop offset="100%" style={{ stopColor: '#95e1a4', stopOpacity: 1 }} />
+                        </linearGradient>
+                        <linearGradient id="gradGreen" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" style={{ stopColor: '#16c172', stopOpacity: 1 }} />
+                          <stop offset="100%" style={{ stopColor: '#38d39f', stopOpacity: 1 }} />
+                        </linearGradient>
+                        <filter id="gaugeShadow">
+                          <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.3"/>
+                        </filter>
+                      </defs>
+
+                      {/* Background arc */}
+                      <path 
+                        d="M 20 100 A 80 80 0 0 1 180 100" 
+                        fill="none" 
+                        stroke="#e8e8e8" 
+                        strokeWidth="20"
+                        strokeLinecap="round"
+                      />
+
+                      {/* Colored segments */}
+                      <path d="M 20 100 A 80 80 0 0 1 52 36" fill="none" stroke="url(#gradRed)" strokeWidth="18" strokeLinecap="round" />
+                      <path d="M 52.5 36 A 80 80 0 0 1 100 20" fill="none" stroke="url(#gradOrange)" strokeWidth="18" strokeLinecap="round" />
+                      <path d="M 100 20 A 80 80 0 0 1 148 36" fill="none" stroke="url(#gradYellow)" strokeWidth="18" strokeLinecap="round" />
+                      <path d="M 148 36 A 80 80 0 0 1 170 70" fill="none" stroke="url(#gradLightGreen)" strokeWidth="18" strokeLinecap="round" />
+                      <path d="M 170 70 A 80 80 0 0 1 180 100" fill="none" stroke="url(#gradGreen)" strokeWidth="18" strokeLinecap="round" />
+
+                      {/* Scale markers - only 0 and 100 */}
+                      <text x="20" y="95" fontSize="12" fill="#666" fontWeight="700" textAnchor="middle">0</text>
+                      <text x="180" y="95" fontSize="12" fill="#666" fontWeight="700" textAnchor="middle">100</text>
+
+                      {/* Needle */}
+                      <line 
+                        x1="100" 
+                        y1="100" 
+                        x2={100 + 65 * Math.cos((180 - payload.body.aggregate_value * 1.8) * Math.PI / 180)} 
+                        y2={100 - 65 * Math.sin((180 - payload.body.aggregate_value * 1.8) * Math.PI / 180)}
+                        stroke="#2c2c2c" 
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                        filter="url(#gaugeShadow)"
+                      />
+                      <circle cx="100" cy="100" r="8" fill="#2c2c2c" filter="url(#gaugeShadow)" />
+                      <circle cx="100" cy="100" r="4" fill="#fff" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Legend */}
+                <div style={{ 
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  gap: 'clamp(12px, 3vw, 24px)',
+                  flexWrap: 'wrap',
+                  padding: '24px 0',
+                  borderTop: '1px solid #e8e8e8',
+                }}>
+                  {[
+                    { color: '#f93a37', label: 'Extreme Fear' },
+                    { color: '#ff8c42', label: 'Fear' },
+                    { color: '#ffd93d', label: 'Neutral' },
+                    { color: '#6bcf7f', label: 'Greed' },
+                    { color: '#16c172', label: 'Extreme Greed' },
+                  ].map((item, idx) => (
+                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div style={{ 
+                        width: '20px', 
+                        height: '20px', 
+                        backgroundColor: item.color, 
+                        borderRadius: '6px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                      }} />
+                      <span style={{ fontSize: '14px', color: '#555', fontWeight: 600 }}>
+                        {item.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Individual Sources */}
+              {payload.body.sources && (
+                <div style={{ marginBottom: '32px' }}>
+                  <h2 style={{ 
+                    fontSize: 'clamp(24px, 4vw, 32px)', 
+                    fontWeight: 700, 
+                    marginBottom: '24px',
+                    color: '#fff',
+                    textAlign: 'center',
+                  }}>
+                    Data Sources
+                  </h2>
+                  <div style={{ 
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                    gap: '20px',
+                  }}>
+                    {payload.body.sources.map((source, idx) => (
+                      <div key={idx} style={{ 
+                        backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                        borderRadius: '16px',
+                        padding: '32px 24px',
+                        textAlign: 'center',
+                        boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+                        transition: 'transform 0.2s ease',
+                        cursor: 'default',
+                        backdropFilter: 'blur(10px)',
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                      >
+                        <div style={{ 
+                          fontSize: '14px', 
+                          color: '#999', 
+                          marginBottom: '16px',
+                          textTransform: 'uppercase',
+                          fontWeight: 700,
+                          letterSpacing: '1px',
+                        }}>
+                          {source.name.replace('source', 'Source ')}
+                        </div>
+                        <div style={{ 
+                          fontSize: '56px', 
+                          fontWeight: 800,
+                          background: getGradient(source.value),
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text',
+                          marginBottom: '8px',
+                        }}>
+                          {source.value}
+                        </div>
+                        <div style={{
+                          fontSize: '12px',
+                          color: '#666',
+                          fontWeight: 600,
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px',
+                        }}>
+                          {getLabel(source.value)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Meta Info */}
+              <div style={{ 
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                borderRadius: '16px',
+                padding: '24px 32px',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+                backdropFilter: 'blur(10px)',
+              }}>
+                <div style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: '16px',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  fontSize: '14px',
+                  color: '#666',
+                }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}>
+                    <span style={{ fontSize: '18px' }}>📊</span>
+                    <span style={{ fontWeight: 600 }}>
+                      {payload.body.source_count} Data Sources
+                    </span>
+                  </div>
+                  <div style={{ color: '#ddd' }}>•</div>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}>
+                    <span style={{ fontSize: '18px' }}>
+                      {payload.body.cached ? '💾' : '🔄'}
+                    </span>
+                    <span style={{ fontWeight: 600 }}>
+                      {payload.body.cached ? 'Cached' : 'Live Data'}
+                    </span>
+                  </div>
+                  <div style={{ color: '#ddd' }}>•</div>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}>
+                    <span style={{ fontSize: '18px' }}>⏱️</span>
+                    <span style={{ fontWeight: 600 }}>
+                      Updates every 5 min
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div style={{
+                textAlign: 'center',
+                marginTop: '48px',
+                padding: '24px',
+                color: 'rgba(255, 255, 255, 0.8)',
+                fontSize: '14px',
+              }}>
+                <p style={{ margin: 0 }}>
+                  Data aggregated from Alternative.me, CoinMarketCap, and CoinStats
+                </p>
+              </div>
             </div>
-            <div>
-              Includes Alternative.me + additional sources (with attribution shown where applicable).
-            </div>
-          </div>
+          )}
         </div>
-      )}
-    </main>
+      </main>
+    </>
   );
 }
